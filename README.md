@@ -17,7 +17,7 @@ Este projeto tem como objetivo aplicar modelos como KNN (K-Nearest Neighbors ou 
 ```
 
 ---
-📂 Dataset
+## 📂 Dataset
 
 Fonte: Kaggle
 
@@ -45,60 +45,107 @@ no/ → 98 imagens sem tumor cerebral
 
 ## Bibliotecas utilizadas
 
-Este projeto foi desenvolvido em Python utilizando bibliotecas amplamente empregadas em análise de dados e aprendizado de máquina, conforme descrito abaixo:
+Este projeto utiliza bibliotecas de visão computacional, processamento de imagens, extração de características e aprendizado de máquina para detecção de tumores cerebrais em imagens MRI.
 
 ---
 
-**Pandas:** Biblioteca utilizada para carregamento, manipulação e análise de dados tabulares.
-Permite ler arquivos CSV, tratar colunas, selecionar variáveis e realizar análises estatísticas básicas.
-
-**Seaborn:** Biblioteca de visualização estatística baseada no matplotlib.
-Facilita a criação de gráficos mais elegantes, como mapas de correlação, boxplots e distribuições.
-
-**Matplotlib:** Biblioteca fundamental para criação de gráficos em Python.
-Foi utilizada para plotar gráficos de dispersão, retas de regressão e gráficos de importância dos atributos.
+**OpenCV (cv2):** Biblioteca de visão computacional utilizada para processamento de imagens.
+Foi utilizada para leitura, redimensionamento, conversão de cores e pré-processamento das imagens MRI.
 ```python
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+import cv2
 ```
-**NumPy:** Biblioteca fundamental para operações numéricas e matemáticas em Python.
-Foi utilizada para cálculos como o RMSE, manipulação de arrays e operações vetoriais.
+**OS:** Biblioteca nativa do Python utilizada para manipulação de arquivos e diretórios.
+Permite navegar pelas pastas do dataset, carregar imagens e gerenciar caminhos de arquivos.
+```python
+import os
+```
+**NumPy:** Biblioteca fundamental para operações numéricas e manipulação de arrays.
+Foi utilizada para processamento eficiente das imagens e operações matemáticas em matrizes.
 ```python
 import numpy as np
 ```
-**train_test_split:** Função do scikit-learn utilizada para dividir o dataset em conjuntos de treino e teste, garantindo uma avaliação adequada do modelo.
+**Pandas:** Biblioteca utilizada para manipulação e organização de dados.
+Permite estruturar resultados em DataFrames e facilitar análises dos dados extraídos das imagens.
 ```python
-from sklearn.model_selection import train_test_split
+import pandas as pd
 ```
-**StandardScaler:** Utilizada para padronização dos dados numéricos, fazendo com que todas as variáveis tenham média 0 e desvio padrão 1.
-Essa etapa é essencial para modelos sensíveis à escala, como Ridge e Lasso.
+**Matplotlib:** Biblioteca de visualização de dados em Python.
+Foi utilizada para exibir imagens, gerar gráficos e visualizar resultados dos modelos.
+```python
+import matplotlib.pyplot as plt
+```
+**Collections (Counter):** Ferramenta para contagem de elementos em estruturas de dados.
+Foi utilizada para analisar a distribuição das classes do dataset (com tumor e sem tumor).
+```python
+from collections import Counter
+```
+**Scikit-image (skimage):** Biblioteca para processamento e análise de imagens.
+
+Foi utilizada para extração de características de textura das imagens MRI.
+* graycomatrix: cálculo da matriz de coocorrência de níveis de cinza (GLCM)
+* graycoprops: extração de propriedades estatísticas de textura
+* local_binary_pattern: extração de padrões locais de textura (LBP)
+```python
+from skimage.feature import graycomatrix, graycoprops, local_binary_pattern
+```
+**Scikit-learn (sklearn):** Biblioteca principal de aprendizado de máquina.
+
+Foi utilizada para divisão dos dados, pré-processamento, treinamento, otimização e avaliação dos modelos de classificação.
+
+**train_test_split:** divisão dos dados em treino e teste
+
+**GridSearchCV:** busca de melhores hiperparâmetros
+
+**StratifiedKFold:** validação cruzada mantendo proporção das classes
+```python
+from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
+```
+
+**StandardScaler:** normalização dos dados para que fiquem com média 0 e desvio padrão 1 
 ```python
 from sklearn.preprocessing import StandardScaler
 ```
-**LinearRegression:** Modelo de Regressão Linear do scikit-learn.
-Foi aplicado tanto na regressão linear simples quanto na regressão linear múltipla.
+
+**Pipeline:** organização do fluxo de processamento e treinamento
 ```python
-from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import Pipeline
 ```
-**Ridge Regression:** Modelo de regressão linear com regularização L2, utilizado para reduzir overfitting e controlar a magnitude dos coeficientes.
+
+**SVC (SVM):** Support Vector Machine
+
+Algoritmo de classificação que encontra o melhor limite de separação entre classes.
+É eficiente para problemas de alta dimensionalidade e foi utilizado para classificar imagens com e sem tumor.
 ```python
-from sklearn.linear_model import Ridge
+from sklearn.svm import SVC
 ```
-**Lasso Regression:** Modelo de regressão linear com regularização L1, capaz de zerar coeficientes, sendo útil para seleção de atributos e análise de importância das variáveis.
+**KNeighborsClassifier:** K-Nearest Neighbors
+
+Algoritmo baseado em proximidade que classifica um dado com base nos seus vizinhos mais próximos.
+A classe é definida pela maioria dos vizinhos semelhantes.
 ```python
-from sklearn.linear_model import Lasso
+from sklearn.neighbors import KNeighborsClassifier
 ```
-**cross_val_score:** Função utilizada para aplicar validação cruzada (cross-validation), permitindo avaliar o desempenho dos modelos de forma mais robusta.
+**LogisticRegression:** regressão logística
+
+Modelo estatístico utilizado para classificação binária.
+Estima a probabilidade de uma imagem pertencer à classe com tumor ou sem tumor.
 ```python
-from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
 ```
-**Métricas de Avaliação:** Foram utilizadas métricas para avaliar o desempenho dos modelos de regressão:
-RMSE (Root Mean Squared Error): mede o erro médio das previsões.
-R² (Coeficiente de Determinação): indica o quanto o modelo explica a variabilidade da variável alvo.
+**RandomForestClassifier:** Random Forest
+
+Algoritmo baseado em múltiplas árvores de decisão.
+Combina vários modelos para melhorar a precisão e reduzir overfitting.
 ```python
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.ensemble import RandomForestClassifier
 ```
+**classification_report:** métricas de avaliação do modelo
+
+**ConfusionMatrixDisplay:** visualização da matriz de confusão
+```python
+from sklearn.metrics import classification_report, ConfusionMatrixDisplay
+```
+
 
 ---
 
