@@ -153,7 +153,39 @@ from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 
 **Arquivo:** `preprocessamento.py`
 
-Nesta etapa inicial, foi realizado o preparo dos dados para a modelagem:
+Nesta etapa inicial, foi realizado a importação do dataset, compreenção dos dados e ajustes para realizar a classificação
+
+Ao importar o caminho do dataset é realizado primeiramente duas listas vazias, uma para armazenar as imagens e a outra para armazenar a label das imagens 
+
+```
+X = [] # vai guardar as imagens
+y = [] # vai guardar a label de cada imagem
+```
+Posteriormente foi definida uma estrutura chamada `resize_com_padding`. O objetivo dela é redmencionar as imagens em um tamanho padrão 224x224 sem causar distorção.
+Sobre o tamanho, foi analisado a média do tamanho das imagens e o resultado deu próximo do padrão 224x224.
+
+Após fazer o `resize_com_padding`, foi aniciada o pré-processamento fazendo etapas como:
+* implementar a função COLOR_BGR2GRAY para deixar as imagens apenas em tom de cinza
+* verificação da dimenção das imagens
+* Aplicadção do `resize_com_padding`
+* normalização para escala de 0 a 1
+* transformar a coluna labels yes = 1 e no = 0
+
+Para validar esse pré-processamento foi feito um código usando o matplotlib
+```python
+idx = 200
+
+plt.imshow(X[idx].reshape(224, 224), cmap="gray")
+plt.title("Tumor" if y[idx] == 1 else "Sem tumor")
+plt.axis("off")
+plt.show()
+```
+O objetivo é analisar se as imagens não foram distorcidas, não foram cortadas, não perderam qualidade, ou sea, mantém detalhes importantes da imagem sem custo computacional muito alto.
+Exemplo:
+
+!(validação cérebro)[]
+
+E após concluir a validação, os dados foram salvos para posteriormente ser implementado o split e realizado a mineração dos dados
 
 ---
 
@@ -161,19 +193,80 @@ Nesta etapa inicial, foi realizado o preparo dos dados para a modelagem:
 
 **Arquivo:** `split+data_mining.py`
 
+Nessa etapa, foi implementada o split (Separação do treino e test) e miretação de dados
+
+**split**
+
+O dataset foi dividido em 80% treino (202 dados) e 20% teste (51 dados) com 2 detalhes importantes
+* Foi utilizando `random_state=42` para fazer com que os dados sejam separados de forma aleatória
+* Foi utilizado o `stratify` para separar as classes de forma que preserve a estrutura original do dataset, ou seja, 60% com tumor e 40% sem tumor tanto no treino, tanto no teste.
+
+Portando, ficou
+```
+Distribuição das classes no treino: [ 78 124]
+Distribuição das classes no teste:  [ 20  31]
+```
+**data_mining**
+
+Essa etapa realiza a mineração de dados das imagens MRI, transformando cada imagem em um conjunto de características numéricas (features) que podem ser utilizadas pelos modelos de machine learning para classificação.
+
+Como modelos tradicionais não trabalham diretamente com imagens, o código extrai informações relevantes como textura, padrões locais e distribuição de intensidade dos pixels.
+
+primeiramente foi feito o carregamento das imagens com a função `load_gray_image():` Observação: Esta etapa pode parecer redundante, pois parte do pré-processamento já foi realizada anteriormente. No entanto, a função foi mantida para melhor organização do pipeline, separação das etapas do processamento e maior clareza na hierarquia das operações do projeto.
+
+GLCM — Características de textura global
+
+A função extract_glcm_features() extrai características usando a Gray Level Co-occurrence Matrix (GLCM), uma técnica que analisa relações entre pixels vizinhos.
+
+Ela:
+* reduz os níveis de cinza da imagem para simplificar o cálculo
+* calcula relações entre pixels em diferentes direções
+* extrai propriedades estatísticas da textura da imagem
+  
+As características extraídas são:
+* contrast → variação de intensidade entre pixels
+* correlation → relação entre pixels vizinhos
+* energy → uniformidade da textura
+* homogeneity → similaridade entre pixels próximos
+
+Essas informações ajudam a identificar padrões estruturais associados à presença de tumores.
+
+LBP — Textura local da imagem
+
+A função extract_lbp_features() utiliza Local Binary Pattern (LBP) para capturar padrões locais de textura.
+
+Ela:
+* compara cada pixel com seus vizinhos
+* gera padrões binários que representam a textura local
+* cria um histograma com a distribuição desses padrões
+
+Isso permite detectar pequenas variações estruturais na imagem.
+
+Histograma de níveis de cinza
+
+A função extract_gray_histogram() calcula a distribuição das intensidades dos pixels da imagem.
+
+Ela:
+* mede quantos pixels existem em cada nível de cinza
+* normaliza os valores para comparação entre imagens
+* representa a aparência geral da imagem
+
+Essa informação descreve a composição global da imagem.
+
+Logo após, os dados são armazenados 
+```
+brain_mri_train.csv
+brain_mri_test.csv
+```
+
 ---
 
-## Comparação: Linear vs Ridge vs Lasso
+## classificação
 
-**Arquivo:** `linear_ridge_lasso.py`
-
----
-
-## Coeficientes e Seleção de Atributos com Lasso
-
-**Arquivo:** `coeficientes.py`
+**Arquivo:** `classificacao.py`
 
 ---
+
 
 ## Conclusão 
 
