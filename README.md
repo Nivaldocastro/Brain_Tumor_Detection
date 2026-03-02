@@ -1,4 +1,4 @@
-# Projeto Detecção de tumores serebrais com machine learning
+# Projeto Detecção de tumores no cérebro com machine learning
 
 Este projeto tem como objetivo aplicar modelos como KNN (K-Nearest Neighbors ou K-Vizinhos Mais Próximos), SVM (Support Vector Machine), Logistic regression e Random Forest em um dataset sobre imagens de exames de ressonância magnética afim de treinalos e posteriormente análisar qaul modelo é melhor comparando não só a acuracy, mas também o desenpenho em relação aos predicts sobre as imagens com tumor.
 
