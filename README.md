@@ -7,9 +7,9 @@ Este projeto tem como objetivo aplicar modelos como KNN (K-Nearest Neighbors ou 
 ## 📁 Estrutura do Projeto
 ```
 ├── preprocessamento.py            # Pré-processamento e correlação
-|    ├──── X.npy, y.npy               # Armazenamento dos dados pré-processados 
+|    ├──── X.npy, y.npy            # Armazenamento dos dados pré-processados 
 ├── split+data_mining.py           # Separação do treino e teste mais a extração de dados
-|    ├──── brain_mri_train.csv        # Armazenamento dos dados coletados da extração
+|    ├──── brain_mri_train.csv     # Armazenamento dos dados coletados da extração
 |    ├──── brain_mri_test.csv
 ├── classificacao.py               # Classificação com GridSearchCV
 ├── imagem                         # Imagens de resultados
