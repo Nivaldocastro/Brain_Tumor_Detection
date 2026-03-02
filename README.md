@@ -265,6 +265,80 @@ brain_mri_test.csv
 
 **Arquivo:** `classificacao.py`
 
+Para a ultima etapa desse projeto, é implementado funções importantes que com Validação Cruzada Estratificada, Pipeline de Treinamento e Otimização com GridSearchCV.
+
+Primeiramente, os dados são carregados a partir de arquivos .csv que foram criados da mineração de dados. Com estes datasets, foram cridadas:
+* `X_train` e `X_test` → variáveis preditoras (features)
+* `y_train` e `y_test` → rótulos das classes (labels)
+
+**Validação Cruzada Estratificada**
+A implementação da valização cruzada utiliza 5 splits, ou seja, 5 divisões que garante que:
+* a proporção das classes seja mantida em cada divisão
+* o modelo seja avaliado de forma mais confiável
+* o risco de overfitting seja reduzido
+
+Ou seja, a validação gruzada é uma técnica muito importande para a confiabilidade dos modelos
+
+**Pipeline de Treinamento**
+Cada modelo é treinado usando um Pipeline, que organiza o fluxo de processamento:
+* Padronização dos dados (StandardScaler)
+
+Normaliza as características para melhorar o desempenho dos modelos.
+
+*Treinamento do modelo de classificação
+
+O algoritmo aprende padrões nos dados para realizar a classificação.
+
+Portando, o uso da pipeline foi utilizada porque evita vazamento de dados e melhora a organização do processo.
+
+**Otimização com GridSearchCV**
+GridShearch é uma técnica bastante importante e prática, sento utilizada em todos os modelos
+
+Sua implementação foi realizada em todos os modelos, assim realizando:
+* testa diferentes combinações de hiperparâmetros
+* seleciona automaticamente a melhor configuração
+* utiliza validação cruzada para avaliação
+* otimiza o modelo com base na métrica F1-score
+
+Após utilizar o GridShearch, o código avalia os quatro algoritmos de classificação:
+
+Support Vector Machine (SVM)
+* busca o melhor limite de separação entre as classes
+* testa diferentes kernels e valores de regularização
+* utiliza balanceamento de classes
+
+K-Nearest Neighbors (KNN)
+* classifica com base nos vizinhos mais próximos
+* testa diferentes números de vizinhos e métricas de distância
+
+Regressão Logística
+* modelo probabilístico para classificação binária
+* ajusta o parâmetro de regularização
+* utiliza balanceamento das classes
+
+Random Forest
+* conjunto de árvores de decisão
+* reduz overfitting e melhora a precisão
+* testa profundidade e parâmetros das árvores
+
+Avaliação dos Modelos
+
+Após o treinamento, cada modelo é avaliado usando o conjunto de teste.
+
+São geradas:
+* Melhores configurações encontradas
+* F1-score médio
+* Classification Report (precisão, recall e F1-score)
+
+Matriz de confusão
+
+A matriz de confusão mostra:
+* acertos do modelo
+* erros de classificação
+* desempenho na detecção de tumores
+
+Essa etapa transforma as características extraídas das imagens em previsões de diagnóstico, permitindo comparar diferentes algoritmos e identificar o modelo com melhor desempenho para detecção de tumores cerebrais.
+
 ---
 
 
