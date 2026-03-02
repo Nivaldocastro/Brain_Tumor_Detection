@@ -12,7 +12,7 @@ Este projeto tem como objetivo aplicar modelos como KNN (K-Nearest Neighbors ou 
 |    ├──── brain_mri_train.csv     # Armazenamento dos dados coletados da extração
 |    ├──── brain_mri_test.csv
 ├── classificacao.py               # Classificação com GridSearchCV
-├── imagem                         # Imagens de resultados
+├── imagens_Brain_Tumor_Datection  # Imagens de resultados
 └── README.md
 ```
 
