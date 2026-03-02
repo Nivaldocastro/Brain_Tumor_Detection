@@ -183,7 +183,8 @@ plt.show()
 O objetivo é analisar se as imagens não foram distorcidas, não foram cortadas, não perderam qualidade, ou sea, mantém detalhes importantes da imagem sem custo computacional muito alto.
 Exemplo:
 
-![validação cérebro](/imagens_Brain_tumor_Detection/brain_no.png)    ![validação cérebro](/imagens_Brain_tumor_Detection/brain_yes.png)
+
+<img src="/imagens_Brain_tumor_Detection/brain_no.png" alt="Logo" width="400" height="auto">  <img src="/imagens_Brain_tumor_Detection/brain_yes.png" alt="Logo" width="400" height="auto">
 
 
 E após concluir a validação, os dados foram salvos para posteriormente ser implementado o split e realizado a mineração dos dados
