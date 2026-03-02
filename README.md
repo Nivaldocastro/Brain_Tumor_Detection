@@ -173,7 +173,7 @@ Após fazer o `resize_com_padding`, foi aniciada o pré-processamento fazendo et
 
 Para validar esse pré-processamento foi feito um código usando o matplotlib
 ```python
-idx = 200
+idx = n   #qualquer número da imagem do dataset
 
 plt.imshow(X[idx].reshape(224, 224), cmap="gray")
 plt.title("Tumor" if y[idx] == 1 else "Sem tumor")
@@ -183,7 +183,8 @@ plt.show()
 O objetivo é analisar se as imagens não foram distorcidas, não foram cortadas, não perderam qualidade, ou sea, mantém detalhes importantes da imagem sem custo computacional muito alto.
 Exemplo:
 
-!(validação cérebro)[]
+![validação cérebro](/imagens_Brain_tumor_Detection/brain_no.png)    ![validação cérebro](/imagens_Brain_tumor_Detection/brain_yes.png)
+
 
 E após concluir a validação, os dados foram salvos para posteriormente ser implementado o split e realizado a mineração dos dados
 
