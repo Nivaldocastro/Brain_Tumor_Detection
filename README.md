@@ -267,7 +267,7 @@ brain_mri_test.csv
 
 **Arquivo:** `classificacao.py`
 
-Para a ultima etapa desse projeto, é implementado funções importantes que com Validação Cruzada Estratificada, Pipeline de Treinamento e Otimização com GridSearchCV.
+Para a ultima etapa desse projeto, é implementado funções como Validação Cruzada Estratificada, Pipeline de Treinamento e Otimização com GridSearchCV.
 
 Primeiramente, os dados são carregados a partir de arquivos .csv que foram criados da mineração de dados. Com estes datasets, foram cridadas:
 * `X_train` e `X_test` → variáveis preditoras (features)
@@ -309,19 +309,26 @@ Support Vector Machine (SVM)
 * testa diferentes kernels e valores de regularização
 * utiliza balanceamento de classes
 
+
 K-Nearest Neighbors (KNN)
 * classifica com base nos vizinhos mais próximos
 * testa diferentes números de vizinhos e métricas de distância
+  
+
 
 Regressão Logística
 * modelo probabilístico para classificação binária
 * ajusta o parâmetro de regularização
 * utiliza balanceamento das classes
 
+
+
 Random Forest
 * conjunto de árvores de decisão
 * reduz overfitting e melhora a precisão
 * testa profundidade e parâmetros das árvores
+
+
 
 Avaliação dos Modelos
 
@@ -338,6 +345,9 @@ A matriz de confusão mostra:
 * acertos do modelo
 * erros de classificação
 * desempenho na detecção de tumores
+  
+<img src="/imagens_Brain_tumor_Detection/mc_svm.png" alt="Logo" width="400" height="auto"> <img src="/imagens_Brain_tumor_Detection/mc_knn.png" alt="Logo" width="400" height="auto">
+<img src="/imagens_Brain_tumor_Detection/mc_logisticregression.png" alt="Logo" width="400" height="auto"> <img src="/imagens_Brain_tumor_Detection/mc_logisticregression.png" alt="Logo" width="400" height="auto">
 
 Essa etapa transforma as características extraídas das imagens em previsões de diagnóstico, permitindo comparar diferentes algoritmos e identificar o modelo com melhor desempenho para detecção de tumores cerebrais.
 
