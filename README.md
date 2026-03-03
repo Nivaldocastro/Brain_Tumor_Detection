@@ -23,11 +23,11 @@ A comparação entre os modelos foi realizada utilizando métricas como F1-score
 ---
 ## 📂 Dataset
 
-Fonte: Kaggle
+**Fonte:** Kaggle
 
-Link: https://www.kaggle.com/datasets/navoneel/brain-mri-images-for-brain-tumor-detection
+**Link:** https://www.kaggle.com/datasets/navoneel/brain-mri-images-for-brain-tumor-detection
 
-Nome do dataset original: Brain MRI Images for Brain Tumor Detection
+**Nome do dataset original:** Brain MRI Images for Brain Tumor Detection
 
 O dataset contém imagens de ressonância magnética (MRI) do cérebro utilizadas para classificação da presença de tumor cerebral.
 
