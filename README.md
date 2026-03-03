@@ -1,6 +1,10 @@
-# Projeto Detecção de tumores no cérebro com machine learning
+# Detecção de Tumores Cerebrais com Machine Learning
 
-Este projeto tem como objetivo aplicar modelos como KNN (K-Nearest Neighbors ou K-Vizinhos Mais Próximos), SVM (Support Vector Machine), Logistic regression e Random Forest em um dataset sobre imagens de exames de ressonância magnética afim de treinalos e posteriormente análisar qaul modelo é melhor comparando não só a acuracy, mas também o desenpenho em relação aos predicts sobre as imagens com tumor.
+Este projeto aplica técnicas de aprendizado de máquina para classificar imagens de ressonância magnética (MRI) em duas categorias: presença ou ausência de tumor cerebral.
+
+Foram avaliados modelos clássicos de classificação — KNN, SVM, Regressão Logística e Random Forest — combinados com técnicas de extração de características de textura (GLCM, LBP e histogramas).
+
+A comparação entre os modelos foi realizada utilizando métricas como F1-score, precisão, recall e matriz de confusão, com foco especial na capacidade de detectar corretamente casos com tumor, considerando a relevância clínica da aplicação.
 
 ---
 
@@ -12,7 +16,7 @@ Este projeto tem como objetivo aplicar modelos como KNN (K-Nearest Neighbors ou 
 |    ├──── brain_mri_train.csv     # Armazenamento dos dados coletados da extração
 |    ├──── brain_mri_test.csv
 ├── classificacao.py               # Classificação com GridSearchCV
-├── imagens_Brain_Tumor_Datection  # Imagens de resultados
+├── imagens_Brain_Tumor_Detection  # Imagens de resultados
 └── README.md
 ```
 
@@ -146,48 +150,54 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 ```
 
-
 ---
 
 ## Pré-processamento 
 
 **Arquivo:** `preprocessamento.py`
+Nesta etapa inicial foi realizada a importação do dataset, compreensão da estrutura dos dados e preparação das imagens para a etapa de classificação.
 
-Nesta etapa inicial, foi realizado a importação do dataset, compreenção dos dados e ajustes para realizar a classificação
+Inicialmente, foram criadas duas listas vazias para armazenar:
 
-Ao importar o caminho do dataset é realizado primeiramente duas listas vazias, uma para armazenar as imagens e a outra para armazenar a label das imagens 
+- `X`: imagens processadas  
+- `y`: rótulos (labels) correspondentes  
 
-```
-X = [] # vai guardar as imagens
-y = [] # vai guardar a label de cada imagem
-```
-Posteriormente foi definida uma estrutura chamada `resize_com_padding`. O objetivo dela é redmencionar as imagens em um tamanho padrão 224x224 sem causar distorção.
-Sobre o tamanho, foi analisado a média do tamanho das imagens e o resultado deu próximo do padrão 224x224.
-
-Após fazer o `resize_com_padding`, foi aniciada o pré-processamento fazendo etapas como:
-* implementar a função COLOR_BGR2GRAY para deixar as imagens apenas em tom de cinza
-* verificação da dimenção das imagens
-* Aplicadção do `resize_com_padding`
-* normalização para escala de 0 a 1
-* transformar a coluna labels yes = 1 e no = 0
-
-Para validar esse pré-processamento foi feito um código usando o matplotlib
 ```python
-idx = n   #qualquer número da imagem do dataset
+X = []  # Armazena as imagens
+y = []  # Armazena as labels
+```
+Em seguida, foi definida a função resize_com_padding, responsável por redimensionar as imagens para o tamanho padrão de 224x224 pixels sem causar distorção.
+
+A escolha do tamanho 224x224 foi baseada na análise da média das dimensões das imagens do dataset, que se aproximavam desse padrão. Além disso, esse tamanho é amplamente utilizado em tarefas de visão computacional.
+
+O pré-processamento incluiu as seguintes etapas:
+* Conversão das imagens para escala de cinza utilizando COLOR_BGR2GRAY 
+* verificação da dimensão das imagens
+* Aplicação do `resize_com_padding`
+* normalização para escala de 0 a 1
+* Conversão das labels: yes = 1 e no = 0
+
+Para validar o pré-processamento, foi utilizado o `matplotlib` para visualizar imagens após as transformações:
+```python
+idx = n  # índice de qualquer imagem do dataset
 
 plt.imshow(X[idx].reshape(224, 224), cmap="gray")
 plt.title("Tumor" if y[idx] == 1 else "Sem tumor")
 plt.axis("off")
 plt.show()
 ```
-O objetivo é analisar se as imagens não foram distorcidas, não foram cortadas, não perderam qualidade, ou sea, mantém detalhes importantes da imagem sem custo computacional muito alto.
-Exemplo:
 
+Essa etapa permite verificar se as imagens:
+
+* Não sofreram distorções
+* Não foram cortadas indevidamente
+* Mantiveram características importantes
+* Preservaram qualidade visual adequada
 
 <img src="/imagens_Brain_tumor_Detection/brain_no.png" alt="Logo" width="400" height="auto">  <img src="/imagens_Brain_tumor_Detection/brain_yes.png" alt="Logo" width="400" height="auto">
 
+Após a validação, os dados processados foram salvos para utilização posterior na etapa de divisão (train/test split) e mineração de dados.
 
-E após concluir a validação, os dados foram salvos para posteriormente ser implementado o split e realizado a mineração dos dados
 
 ---
 
@@ -195,15 +205,17 @@ E após concluir a validação, os dados foram salvos para posteriormente ser im
 
 **Arquivo:** `split+data_mining.py`
 
-Nessa etapa, foi implementada o split (Separação do treino e test) e miretação de dados
+Nessa etapa, foi implementado o split (Separação do treino e teste) e mineração de dados
 
 **split**
 
-O dataset foi dividido em 80% treino (202 dados) e 20% teste (51 dados) com 2 detalhes importantes
-* Foi utilizando `random_state=42` para fazer com que os dados sejam separados de forma aleatória
-* Foi utilizado o `stratify` para separar as classes de forma que preserve a estrutura original do dataset, ou seja, 60% com tumor e 40% sem tumor tanto no treino, tanto no teste.
+O dataset foi dividido em 80% para treino (202 amostras) e 20% para teste (51 amostras).
 
-Portando, ficou
+Dois pontos importantes foram considerados:
+
+- Utilização de `random_state=42` para garantir reprodutibilidade dos resultados.
+- Uso do parâmetro `stratify=y` para manter a proporção original das classes (aproximadamente 60% com tumor e 40% sem tumor) tanto no conjunto de treino quanto no de teste.
+Portanto, ficou
 ```
 Distribuição das classes no treino: [ 78 124]
 Distribuição das classes no teste:  [ 20  31]
@@ -214,7 +226,7 @@ Essa etapa realiza a mineração de dados das imagens MRI, transformando cada im
 
 Como modelos tradicionais não trabalham diretamente com imagens, o código extrai informações relevantes como textura, padrões locais e distribuição de intensidade dos pixels.
 
-primeiramente foi feito o carregamento das imagens com a função `load_gray_image():` Observação: Esta etapa pode parecer redundante, pois parte do pré-processamento já foi realizada anteriormente. No entanto, a função foi mantida para melhor organização do pipeline, separação das etapas do processamento e maior clareza na hierarquia das operações do projeto.
+Primeiramente, foi feito o carregamento das imagens com a função `load_gray_image():` Observação: Esta etapa pode parecer redundante, pois parte do pré-processamento já foi realizada anteriormente. No entanto, a função foi mantida para melhor organização do pipeline, separação das etapas do processamento e maior clareza na hierarquia das operações do projeto.
 
 GLCM — Características de textura global
 
@@ -255,11 +267,12 @@ Ela:
 
 Essa informação descreve a composição global da imagem.
 
-Logo após, os dados são armazenados 
-```
-brain_mri_train.csv
-brain_mri_test.csv
-```
+Após a extração das características, os dados foram salvos nos arquivos:
+
+- `brain_mri_train.csv`
+- `brain_mri_test.csv`
+
+Essa etapa permite reutilizar os dados minerados sem necessidade de recalcular as features, tornando o pipeline mais eficiente e organizado.
 
 ---
 
@@ -267,42 +280,44 @@ brain_mri_test.csv
 
 **Arquivo:** `classificacao.py`
 
-Para a ultima etapa desse projeto, é implementado funções como Validação Cruzada Estratificada, Pipeline de Treinamento e Otimização com GridSearchCV.
+Para a última etapa desse projeto, são implementadas funções como Validação Cruzada Estratificada, Pipeline de Treinamento e Otimização com GridSearchCV.
 
-Primeiramente, os dados são carregados a partir de arquivos .csv que foram criados da mineração de dados. Com estes datasets, foram cridadas:
+Primeiramente, os dados são carregados a partir de arquivos .csv que foram criados da mineração de dados. Com estes datasets, foram criadas:
 * `X_train` e `X_test` → variáveis preditoras (features)
 * `y_train` e `y_test` → rótulos das classes (labels)
 
 **Validação Cruzada Estratificada**
-A implementação da valização cruzada utiliza 5 splits, ou seja, 5 divisões que garante que:
+A implementação da validação cruzada utiliza 5 splits, ou seja, 5 divisões que garantem que:
 * a proporção das classes seja mantida em cada divisão
 * o modelo seja avaliado de forma mais confiável
 * o risco de overfitting seja reduzido
 
-Ou seja, a validação gruzada é uma técnica muito importande para a confiabilidade dos modelos
+Ou seja, a validação cruzada é uma técnica muito importante para a confiabilidade dos modelos
 
 **Pipeline de Treinamento**
 Cada modelo é treinado usando um Pipeline, que organiza o fluxo de processamento:
 * Padronização dos dados (StandardScaler)
 
-Normaliza as características para melhorar o desempenho dos modelos.
+A padronização é aplicada apenas nos dados de treino dentro da validação cruzada, evitando vazamento de dados e garantindo avaliação justa.
 
 *Treinamento do modelo de classificação
 
 O algoritmo aprende padrões nos dados para realizar a classificação.
 
-Portando, o uso da pipeline foi utilizada porque evita vazamento de dados e melhora a organização do processo.
+Portanto, a pipeline foi utilizada porque evita vazamento de dados e melhora a organização do processo.
 
 **Otimização com GridSearchCV**
-GridShearch é uma técnica bastante importante e prática, sento utilizada em todos os modelos
+GridSearch é uma técnica bastante importante e prática, sendo utilizada em todos os modelos
 
-Sua implementação foi realizada em todos os modelos, assim realizando:
+Sua implementação foi realizada em todos os modelos, permitindo:
 * testa diferentes combinações de hiperparâmetros
 * seleciona automaticamente a melhor configuração
 * utiliza validação cruzada para avaliação
 * otimiza o modelo com base na métrica F1-score
 
-Após utilizar o GridShearch, o código avalia os quatro algoritmos de classificação:
+Observação (O F1-score foi escolhido como métrica principal por equilibrar precisão e recall, sendo adequado para problemas com possível desbalanceamento de classes).
+
+Após utilizar o GridSearch, o código avalia os quatro algoritmos de classificação:
 
 Support Vector Machine (SVM)
 * busca o melhor limite de separação entre as classes
@@ -315,12 +330,10 @@ K-Nearest Neighbors (KNN)
 * testa diferentes números de vizinhos e métricas de distância
   
 
-
 Regressão Logística
 * modelo probabilístico para classificação binária
 * ajusta o parâmetro de regularização
 * utiliza balanceamento das classes
-
 
 
 Random Forest
@@ -328,9 +341,9 @@ Random Forest
 * reduz overfitting e melhora a precisão
 * testa profundidade e parâmetros das árvores
 
+---
 
-
-Avaliação dos Modelos
+## Resultados Numéricos
 
 Após o treinamento, cada modelo é avaliado usando o conjunto de teste.
 
@@ -339,23 +352,88 @@ São geradas:
 * F1-score médio
 * Classification Report (precisão, recall e F1-score)
 
-Matriz de confusão
+Esta tabela mostra os melhores hiperparâmetros e o melhor F1-score Médio (CV) de cada modelo que o GridSearch formou
+
+<img src="/imagens_Brain_tumor_Detection/F1-score_Médio_(CV).png" alt="Logo" width="800" height="auto">
+
+Esta tabela mostra o desempenho geral dos modelos com o KNN mostrando ter um melhor desempenho tanto na Accuracy quanto no F1-score
+
+<img src="/imagens_Brain_tumor_Detection/desempenho_geral.png" alt="Logo" width="800" height="auto">
+
+Esta tabela mostra o desempenho em relação à classe tumor, com o KNN mostrando ter um melhor desempenho tanto na Accuracy quanto no F1-score
+
+<img src="/imagens_Brain_tumor_Detection/desempenho_tumor.png" alt="Logo" width="800" height="auto">
+
+Esta tabela mostra o desempenho em relação à classe sem tumor, com o KNN mostrando ter um melhor desempenho tanto na Accuracy quanto no F1-score
+
+<img src="/imagens_Brain_tumor_Detection/desempenho_sem_tumor.png" alt="Logo" width="800" height="auto">
+
+Portanto, em questão de métricas, o KNN possui as melhores métricas
+
+<img src="/imagens_Brain_tumor_Detection/melhor_modelo.png" alt="Logo" width="800" height="auto">
+
+Porém, como é um dataset de tumores cerebrais, o mais importante é saber sobre a detecção dos tumores, então para ter certeza de qual o melhor modelo, foi implementado uma matriz de confusão para cada modelo
+
+--- 
+
+**Matriz de confusão**
 
 A matriz de confusão mostra:
 * acertos do modelo
 * erros de classificação
 * desempenho na detecção de tumores
+
+Ou seja, a matriz de confusão permite visualizar diretamente falsos positivos e falsos negativos, fornecendo uma análise mais interpretável do comportamento do modelo.
   
 <img src="/imagens_Brain_tumor_Detection/mc_svm.png" alt="Logo" width="400" height="auto"> <img src="/imagens_Brain_tumor_Detection/mc_knn.png" alt="Logo" width="400" height="auto">
-<img src="/imagens_Brain_tumor_Detection/mc_logisticregression.png" alt="Logo" width="400" height="auto"> <img src="/imagens_Brain_tumor_Detection/mc_logisticregression.png" alt="Logo" width="400" height="auto">
+<img src="/imagens_Brain_tumor_Detection/mc_logisticregression.png" alt="Logo" width="400" height="auto"> <img src="/imagens_Brain_tumor_Detection/mc_randomforest.png" alt="Logo" width="400" height="auto">
 
-Essa etapa transforma as características extraídas das imagens em previsões de diagnóstico, permitindo comparar diferentes algoritmos e identificar o modelo com melhor desempenho para detecção de tumores cerebrais.
+
+## Escolha do Modelo para Aplicação Prática
+
+Embora o KNN tenha apresentado melhor desempenho geral em termos de F1-score médio e acurácia, o modelo SVM foi escolhido como principal para aplicação prática.
+
+Isso ocorre porque o SVM apresentou:
+
+* Maior recall para a classe "Tumor"
+* Menor número de falsos negativos
+* Melhor sensibilidade na detecção de tumores
+
+No contexto médico, reduzir falsos negativos é essencial, pois deixar de detectar um tumor pode ter consequências graves. Portanto, priorizou-se o modelo com melhor capacidade de detecção da classe positiva.
 
 ---
-
 
 ## Conclusão 
 
+Este projeto demonstrou a aplicação prática de técnicas de visão computacional e aprendizado de máquina na detecção de tumores cerebrais a partir de imagens de ressonância magnética.
+
+A combinação de métodos de extração de características baseadas em textura (GLCM, LBP e histogramas) com algoritmos clássicos de classificação mostrou-se eficaz para um dataset de pequeno porte.
+
+Entre os modelos avaliados, o KNN apresentou melhor desempenho geral em métricas como acurácia e F1-score. No entanto, considerando o contexto médico da aplicação, o modelo SVM foi escolhido como principal por apresentar maior recall para a classe "Tumor" e menor número de falsos negativos, priorizando a sensibilidade na detecção de casos positivos.
+
+Os resultados reforçam que abordagens tradicionais de machine learning, quando bem estruturadas e combinadas com técnicas adequadas de extração de características, ainda podem oferecer desempenho competitivo em problemas de classificação de imagens médicas.
+
+Este trabalho também evidencia a importância da escolha criteriosa de métricas de avaliação, especialmente em cenários onde o custo de erros pode ter impacto significativo.
+
 ---
 
-Projeto desenvolvido para fins acadêmicos e aprendizado em Machine Learning.
+
+## Limitações do Projeto
+
+- Dataset pequeno (253 imagens)
+- Ausência de validação externa
+- Uso de modelos clássicos ao invés de deep learning
+
+---
+
+## Trabalhos Futuros
+
+Como continuação deste projeto, pretende-se implementar uma abordagem baseada em Deep Learning, utilizando Redes Neurais Convolucionais (CNNs), que são amplamente empregadas em tarefas de classificação de imagens médicas.
+
+A aplicação de modelos como CNNs pode permitir o aprendizado automático de características relevantes diretamente das imagens, reduzindo a dependência de técnicas manuais de extração de atributos.
+
+Além disso, o uso de transfer learning com arquiteturas pré-treinadas poderá contribuir para melhorar a capacidade de generalização do modelo, especialmente considerando o tamanho reduzido do dataset atual.
+
+---
+
+Este projeto possui caráter educacional e exploratório, não devendo ser utilizado para diagnóstico médico real.
